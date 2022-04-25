@@ -9,9 +9,25 @@ import (
 )
 
 func TestCacheSmall(t *testing.T) {
+	data := make([]int, 0)
+	gen := 0
+	for i := 0; i < 10; i++ {
+		gen++
+		if gen&((1<<2)-1) == 0 {
+			gen++
+		}
+		data = append(data, gen)
+	}
+
+	t1 := make([]int, 0)
+	for _, v := range data {
+		a := v & ((1 << 2) - 1)
+		t1 = append(t1, a)
+	}
+
 	c := New(1)
 	defer c.Reset()
-
+	c.Set([]byte("key"), []byte("value"))
 	if v := c.Get(nil, []byte("aaa")); len(v) != 0 {
 		t.Fatalf("unexpected non-empty value obtained from small cache: %q", v)
 	}
